@@ -39,6 +39,9 @@ GRAPH_SCOPE = "https://graph.microsoft.com/.default"
 GRAPH_SENDMAIL_URL = "https://graph.microsoft.com/v1.0/users/{sender}/sendMail"
 GRAPH_SENDMAIL_ME_URL = "https://graph.microsoft.com/v1.0/me/sendMail"
 TOKEN_CACHE_FILE = BASE_DIR / ".token_cache.json"
+# ค่าเริ่มต้นสำหรับโหมด device: Client ID ของ Microsoft Graph Command Line Tools
+# (แอปทางการของ Microsoft) ทำให้ใช้งานได้โดยไม่ต้องลงทะเบียนแอปใน Azure เอง
+DEFAULT_DEVICE_CLIENT_ID = "14d82eec-204b-4c2f-b7e8-296a70dab67e"
 
 
 # ---------------------------------------------------------------------------
@@ -166,9 +169,7 @@ def get_device_token() -> str:
     except ImportError:
         sys.exit("[ERROR] โหมด device ต้องติดตั้ง msal ก่อน: pip install msal")
 
-    client_id = os.environ.get("O365_CLIENT_ID", "")
-    if not client_id:
-        sys.exit("[ERROR] โหมด device ต้องตั้งค่า O365_CLIENT_ID ใน .env")
+    client_id = os.environ.get("O365_CLIENT_ID") or DEFAULT_DEVICE_CLIENT_ID
     tenant = os.environ.get("O365_TENANT_ID", "organizations")
 
     cache = msal.SerializableTokenCache()
@@ -277,8 +278,8 @@ def main() -> None:
     parser.add_argument("--data", "-d", action="append", default=[], metavar="KEY=VALUE",
                         help="ตัวแปรสำหรับเทมเพลต เช่น --data name=สมชาย")
     parser.add_argument("--attach", "-a", action="append", default=[], help="ไฟล์แนบ (ระบุซ้ำได้)")
-    parser.add_argument("--mode", choices=["graph", "device", "smtp"], default=os.environ.get("MAIL_MODE", "graph"),
-                        help="วิธีส่ง: graph (ค่าเริ่มต้น), device (ล็อกอินผ่านเบราว์เซอร์เอง) หรือ smtp")
+    parser.add_argument("--mode", choices=["device", "graph", "smtp"], default=os.environ.get("MAIL_MODE", "device"),
+                        help="วิธีส่ง: device (ค่าเริ่มต้น — ล็อกอินผ่านเบราว์เซอร์เอง), graph หรือ smtp")
     parser.add_argument("--dry-run", action="store_true", help="แสดงตัวอย่างโดยไม่ส่งจริง")
     parser.add_argument("--list-groups", action="store_true", help="แสดงรายชื่อกลุ่มทั้งหมด")
     parser.add_argument("--list-templates", action="store_true", help="แสดงรายชื่อเทมเพลตทั้งหมด")

@@ -9,33 +9,35 @@
 - กลุ่มผู้รับกำหนดใน `config/groups.json` เลือกส่งได้ทีละหลายกลุ่ม
 - แนบไฟล์ได้, CC ได้, มีโหมด `--dry-run` ดูตัวอย่างก่อนส่งจริง
 
-## ติดตั้ง
+## 🚀 เริ่มใช้เร็วที่สุด (โหมด device — ไม่ต้องตั้งค่าอะไรเลย)
 
 ```bash
 pip install -r requirements.txt
-cp .env.example .env   # แล้วแก้ไขค่าใน .env ให้ถูกต้อง
+
+# แก้ config/groups.json ใส่อีเมลผู้รับจริงก่อน แล้ว:
+python send_mail.py -t welcome -g it-team -s "ทดสอบ" -d name=สมชาย
 ```
 
-## ตั้งค่าโหมด Device Login (ง่ายสุด — แนะนำสำหรับใช้งานเอง)
-
-โหมดนี้**ไม่ต้องใช้ Client Secret และไม่ต้องขอ admin consent** (ในองค์กรส่วนใหญ่):
-
-1. เข้า [Azure Portal](https://portal.azure.com) → **Microsoft Entra ID** → **App registrations** → **New registration** (ตั้งชื่ออะไรก็ได้ เช่น "MailSender")
-2. จดค่า **Application (client) ID** และ **Directory (tenant) ID**
-3. ไปที่เมนู **Authentication** → เลื่อนหา **Allow public client flows** → เลือก **Yes** → Save
-4. ใส่ค่าใน `.env`: `MAIL_MODE=device`, `O365_CLIENT_ID=...`, `O365_TENANT_ID=...`
-
-วิธีใช้: สั่งส่งเมลตามปกติ ครั้งแรกโปรแกรมจะแสดงข้อความประมาณ
+ครั้งแรกโปรแกรมจะแสดงข้อความประมาณนี้:
 
 ```
 To sign in, use a web browser to open the page
 https://microsoft.com/devicelogin and enter the code ABCD-1234
 ```
 
-เปิดเบราว์เซอร์ตามลิงก์ ใส่โค้ด แล้วล็อกอินบัญชี O365 ของคุณตามปกติ (MFA ใช้ได้)
-เสร็จแล้วโปรแกรมจะส่งเมลในนามบัญชีของคุณทันที และ**จำการล็อกอินไว้** (ไฟล์ `.token_cache.json`) ครั้งต่อไปไม่ต้องล็อกอินซ้ำ
+**เปิดเบราว์เซอร์ตามลิงก์ → ใส่โค้ด → ล็อกอินบัญชี O365 ของคุณตามปกติ** (MFA ใช้ได้, รหัสผ่านใส่ในเว็บ Microsoft โดยตรง) ถ้ามีหน้าขอสิทธิ์ให้กด Accept เสร็จแล้วโปรแกรมจะส่งเมลในนามบัญชีของคุณทันที และ**จำการล็อกอินไว้** (ไฟล์ `.token_cache.json`) ครั้งต่อไปส่งได้เลยไม่ต้องล็อกอินซ้ำ
 
-## ตั้งค่า Microsoft Graph API (สำหรับระบบอัตโนมัติ/เซิร์ฟเวอร์)
+> โหมดนี้ใช้ Client ID ของ Microsoft Graph Command Line Tools (เครื่องมือทางการของ Microsoft) จึงไม่ต้องลงทะเบียนแอปใน Azure เอง — แต่ถ้าองค์กรของคุณบล็อกไว้ ให้ลงทะเบียนแอปเองแล้วตั้ง `O365_CLIENT_ID` ใน `.env` (เปิด **Allow public client flows** = Yes ในเมนู Authentication ด้วย)
+
+## ตั้งค่าโหมดอื่น (ไม่บังคับ)
+
+โหมด `graph` และ `smtp` เหมาะกับงานอัตโนมัติบนเซิร์ฟเวอร์ที่ไม่มีคนคอยล็อกอิน ต้องสร้างไฟล์ `.env` ก่อน:
+
+```bash
+cp .env.example .env   # แล้วแก้ไขค่าใน .env ให้ถูกต้อง
+```
+
+### ตั้งค่า Microsoft Graph API (โหมด graph — สำหรับระบบอัตโนมัติ/เซิร์ฟเวอร์)
 
 1. เข้า [Azure Portal](https://portal.azure.com) → **Microsoft Entra ID** → **App registrations** → **New registration**
 2. หลังสร้างแอปแล้ว จดค่า **Tenant ID** และ **Client ID**
@@ -45,7 +47,7 @@ https://microsoft.com/devicelogin and enter the code ABCD-1234
 
 > แนะนำให้ทำ [Application Access Policy](https://learn.microsoft.com/en-us/graph/auth-limit-mailbox-access) จำกัดให้แอปส่งได้เฉพาะบัญชีผู้ส่งที่กำหนด
 
-## ตั้งค่า SMTP (โหมดสำรอง)
+### ตั้งค่า SMTP (โหมดสำรอง)
 
 ตั้ง `MAIL_MODE=smtp` ใน `.env` พร้อม `SMTP_USER` / `SMTP_PASSWORD`
 (บัญชีต้องเปิด **Authenticated SMTP** ใน Microsoft 365 admin center และหากเปิด MFA ต้องใช้ App Password)
