@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="th">
+<body style="font-family: 'Segoe UI', Tahoma, sans-serif; color: #333; max-width: 600px; margin: 0 auto;">
+  <div style="background: #1a7f37; color: #fff; padding: 20px; border-radius: 8px 8px 0 0;">
+    <h2 style="margin: 0;">ยินดีต้อนรับ</h2>
+  </div>
+  <div style="border: 1px solid #ddd; border-top: none; padding: 20px; border-radius: 0 0 8px 8px;">
+    <p>เรียนคุณ {{ name }},</p>
+    <p>ยินดีต้อนรับเข้าสู่ทีม {{ team | default('ของเรา') }} หากมีข้อสงสัยสามารถติดต่อได้ที่อีเมลนี้</p>
+    <p>ขอแสดงความนับถือ<br>{{ sender_name | default('ฝ่ายบุคคล') }}</p>
+  </div>
+</body>
+</html>

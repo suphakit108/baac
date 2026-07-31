@@ -1,0 +1,18 @@
+{
+  "groups": {
+    "it-team": [
+      "somchai@example.com",
+      "somsri@example.com"
+    ],
+    "hr-team": [
+      "hr1@example.com",
+      "hr2@example.com"
+    ],
+    "all-staff": [
+      "somchai@example.com",
+      "somsri@example.com",
+      "hr1@example.com",
+      "hr2@example.com"
+    ]
+  }
+}
