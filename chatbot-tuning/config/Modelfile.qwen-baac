@@ -1,0 +1,19 @@
+# โมเดลสำหรับ Chatbot ที่ล็อกค่าไว้ฝั่ง Ollama โดยตรง
+# จึงไม่ขึ้นกับว่า OpenWebUI/LiteLLM ส่งพารามิเตอร์ผ่านหรือไม่
+# แก้ FROM ให้ตรงกับ tag ของ qwen ที่ใช้อยู่จริง (ดูด้วย: ollama list)
+#
+#   docker cp Modelfile.qwen-baac openwebui-ollama:/tmp/
+#   docker exec openwebui-ollama ollama create qwen-baac -f /tmp/Modelfile.qwen-baac
+#
+FROM qwen2.5:7b-instruct
+
+# Prompt (~2,000 tokens) + คำตอบ (≤400) ต้องพอดี ถ้าเล็กไป Ollama จะตัดส่วนต้นทิ้งเงียบ ๆ (System Prompt หาย)
+PARAMETER num_ctx 4096
+PARAMETER num_predict 400
+
+# คำตอบนโยบายต้องนิ่ง: temperature ต่ำ + seed คงที่
+PARAMETER temperature 0.1
+PARAMETER top_p 0.8
+PARAMETER top_k 20
+PARAMETER repeat_penalty 1.05
+PARAMETER seed 42

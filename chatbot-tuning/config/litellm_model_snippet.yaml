@@ -1,0 +1,14 @@
+# เพิ่มใน model_list ของ litellm_config.yaml (คงโมเดลเดิมไว้เป็น fallback)
+# ชี้ไปที่โมเดลที่สร้างจาก Modelfile.qwen-baac
+model_list:
+  - model_name: qwen-baac
+    litellm_params:
+      model: ollama_chat/qwen-baac
+      api_base: http://openwebui-ollama:11434
+      timeout: 55            # สั้นกว่า timeout ของ DTKPI (60 วินาที) เพื่อให้เห็น error ใน LiteLLM log
+      stream_timeout: 55
+      keep_alive: -1
+
+litellm_settings:
+  num_retries: 0             # ไม่ retry งาน generate ในเครื่อง (retry 1 ครั้ง = รอเพิ่มเท่าตัว)
+  request_timeout: 55
